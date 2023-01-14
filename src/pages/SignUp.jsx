@@ -2,22 +2,39 @@ import { useState } from "react"
 import { AiFillEye, AiFillEyeInvisible} from "react-icons/ai";
 import { Link } from "react-router-dom";
 import OAuth from "../components/OAuth";
-
+import {getAuth, createUserWithEmailAndPassword, 
+updateProfile} from "firebase/auth"
+import { db } from "../firebase";
+import { doc, serverTimestamp, setDoc } from "firebase/firestore";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 export default function SignUp() {
   const [name,setName] = useState("");
   const [email,setEmail] = useState("")
   const [password,setPassword] = useState("")
   const [showPassword, setShowPassword] = useState(false)
-  // const {formData,setFormData} = useState({
-  //   email: "",
-  //   password: "",
-  // });
-  // const {email,password} = formData;
 
-  // const onChange = (e) => {
-  //   setFormData
-  // }
+  const formData = {email,name};
+
+  const navigate = useNavigate()
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const auth = getAuth()
+      const userCredential = await createUserWithEmailAndPassword
+      (auth, email, password)
+      updateProfile(auth.currentUser, {
+        displayName: name
+      })
+      const user = userCredential.user
+      formData.timestamp = serverTimestamp();
+      await setDoc(doc(db, "users", user.uid), formData);
+      navigate("/")
+    } catch (error) {
+      toast.error("Something went wromg with the registration")
+    }
+  }
 
   return (
     <section>
@@ -31,7 +48,7 @@ export default function SignUp() {
           className='w-full rounded-2xl'/>
         </div>
         <div className='w-full md:w-[67%] lg:w-[40%] lg:ml-20'>
-          <form>
+          <form onSubmit={handleSubmit}>
             <input className='w-full px-4 py-2 text-xl text-gray-700 mb-6 bg-white
             rounded border-gray-300 transition ease-in-out' 
             type="text" 

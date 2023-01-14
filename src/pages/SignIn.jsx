@@ -8,15 +8,10 @@ export default function SignIn() {
   const [email,setEmail] = useState("")
   const [password,setPassword] = useState("")
   const [showPassword, setShowPassword] = useState(false)
-  // const {formData,setFormData} = useState({
-  //   email: "",
-  //   password: "",
-  // });
-  // const {email,password} = formData;
+   
+  
 
-  // const onChange = (e) => {
-  //   setFormData
-  // }
+ 
 
   return (
     <section>
