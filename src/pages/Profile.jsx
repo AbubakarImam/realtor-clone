@@ -6,9 +6,9 @@ export default function Profile() {
   const auth = getAuth()
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    name: "Abubakar",
-    email: "salamabubakarimam@gmail.com"
-  })
+    name: auth.currentUser.displayName,
+    email: auth.currentUser.email
+  });
   const { name, email } = formData;
   const onLogOut = () => {
     auth.signOut()
