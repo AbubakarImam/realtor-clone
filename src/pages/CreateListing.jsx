@@ -67,7 +67,7 @@ const CreateListing = () => {
         // let location
         const storeImage = async () => {
             const storage = getStorage();
-            const filename = `${auth.currentUser.uid}-${image.name}`
+            const filename = `${auth.currentUser.uid}-${images.name}`
 
         }
         const imgUrls = await Promise.all(
