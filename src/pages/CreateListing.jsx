@@ -1,6 +1,10 @@
 import React, { useState } from 'react'
+import { toast } from 'react-toastify';
+import Spinner from '../components/Spinner';
 
 const CreateListing = () => {
+    const [geolocationEnabled, setGeolocationEnabled] = useState(true);
+    const [loading, setLoading] = useState(false)
     const [formData, setFormData] = useState({
         type: "rent",
         name: "",
@@ -13,16 +17,60 @@ const CreateListing = () => {
         offer: false,
         regularPrice: 0,
         discountedPrice: 0,
+        latitude: 0,
+        longitude: 0,
+        images: {}
     });
-    const { type, name, bedroom, bathroom, parking, furnished,
-        address, description, offer, regularPrice, discountedPrice } = formData;
-    const onChange = () => { }
+    const { type, name, bedroom, bathroom, parking, furnished, latitude, longitude,
+        address, description, offer, regularPrice, discountedPrice, images } = formData;
+    const onChange = (e) => {
+        let boolean = null;
+        if (e.target.value === 'true') {
+            boolean = true
+        }
+        if (e.target.value === 'false') {
+            boolean = false
+        }
+        if (e.target.files) {
+            setFormData((prev) => ({
+                ...prev,
+                images: e.target.files
+            })
+            )
+        }
+        if (!e.target.files) {
+            setFormData((prev) => ({
+                ...prev,
+                [e.target.id]: boolean ?? e.target.value
+            }))
+        }
+    }
+    const onSubmit = (e) => {
+        e.preventDefault();
+        setLoading(true);
+        if (discountedPrice >= regularPrice) {
+            setLoading(false)
+            toast.error('Discounted price needs to be less than regular price')
+            return;
+        }
+        if (images.length > 6) {
+            setLoading(false);
+            toast.error("maximum of 6 images allowed");
+            return
+        }
+        let geolocation = {}
+        let location
+
+    }
+    if (loading) {
+        return <Spinner />
+    }
     return (
         <main className='max-w-6xl px-6 mx-auto'>
             <h1 className="text-3xl text-center mt-6 font-bold">
                 Create a Listing
             </h1>
-            <form>
+            <form onSubmit={onSubmit}>
                 <p className="text-lg mt-6 font-semibold">
                     Sell / Rent
                 </p>
@@ -34,7 +82,7 @@ const CreateListing = () => {
                                 "bg-slate-600 text-white"}`}>
                         sell
                     </button>
-                    <button type='button' id='type' value='sale' onClick={onChange}
+                    <button type='button' id='type' value='rent' onClick={onChange}
                         className={`ml-3 w-full px-7 py-3 font-medium text-sm uppercase shadow-md
                     rounded hover:shadow-lg focus:shadow-lg active:shadow-lg transition
                     duration-150 ease-in-out ${type === 'sale' ? "bg-white text-black" :
@@ -43,7 +91,7 @@ const CreateListing = () => {
                     </button>
                 </div>
                 <p className='text-lg mt-6 font-semibold'>Name</p>
-                <input type="text" id='name' value={name} onChange={onChange} placeholder="address"
+                <input type="text" id='name' value={name} onChange={onChange} placeholder="Name"
                     required className='w-full px-4 py-2 text-xl
                         text-gray-700 bg-white border border-gray-300 rounded transition
                         duration-150 ease-in-out focus:text-gray-700 focus:bg-white 
@@ -102,13 +150,37 @@ const CreateListing = () => {
                 </div>
                 <p className='text-lg mt-6 font-semibold'>Address</p>
                 <textarea type="text" id='address' value={address}
-                    onChange={onChange} placeholder="Name" required className='w-full px-4 py-2 text-xl
+                    onChange={onChange} placeholder="Address" required className='w-full px-4 py-2 text-xl
                         text-gray-700 bg-white border border-gray-300 rounded transition
                         duration-150 ease-in-out focus:text-gray-700 focus:bg-white 
                         focus:border-slate-600 mb-6' />
+
+                {!geolocationEnabled && (
+                    <div className="flex space-x-6 justify-start mb-6">
+                        <div className="">
+                            <p className="text-lg font-semibold">Latitude</p>
+                            <input type="number" value={latitude} id="latitude"
+                                onChange={onChange} required min={-90} max={90}
+                                className='w-full px-4 py-2 text-xl text-gray-700 bg-white
+                            border border-gray-300 rounded transition duration-150 ease-in-out
+                            focus:text-gray-700 focus:bg-white focus:border-slate-600
+                            text-center'/>
+                        </div>
+                        <div className="">
+                            <p className="text-lg font-semibold">Longitude</p>
+                            <input type="number" value={longitude} id="longitude"
+                                onChange={onChange} required min={-180} max={180}
+                                className='w-full px-4 py-2 text-xl text-gray-700 bg-white
+                            border border-gray-300 rounded transition duration-150 ease-in-out
+                            focus:text-gray-700 focus:bg-white focus:border-slate-600
+                            text-center'/>
+                        </div>
+                    </div>
+                )}
+
                 <p className='text-lg font-semibold'>Description</p>
                 <textarea type="text" id='description' value={description}
-                    onChange={onChange} placeholder="description" required className='w-full px-4 py-2 text-xl
+                    onChange={onChange} placeholder="Description" required className='w-full px-4 py-2 text-xl
                         text-gray-700 bg-white border border-gray-300 rounded transition
                         duration-150 ease-in-out focus:text-gray-700 focus:bg-white 
                         focus:border-slate-600 mb-6' />

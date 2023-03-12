@@ -32,7 +32,7 @@ export default function SignIn() {
         navigate('/')
       }
     } catch (error) {
-      toast.error('Wrong User Credentials')
+      toast.error('Error Occur')
     }
   }
 
