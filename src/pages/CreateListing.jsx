@@ -1,8 +1,13 @@
+import { async } from '@firebase/util';
 import React, { useState } from 'react'
 import { toast } from 'react-toastify';
 import Spinner from '../components/Spinner';
+import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { getAuth } from 'firebase/auth';
+
 
 const CreateListing = () => {
+    const auth = getAuth();
     const [geolocationEnabled, setGeolocationEnabled] = useState(true);
     const [loading, setLoading] = useState(false)
     const [formData, setFormData] = useState({
@@ -45,7 +50,7 @@ const CreateListing = () => {
             }))
         }
     }
-    const onSubmit = (e) => {
+    const onSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
         if (discountedPrice >= regularPrice) {
@@ -58,10 +63,22 @@ const CreateListing = () => {
             toast.error("maximum of 6 images allowed");
             return
         }
-        let geolocation = {}
-        let location
+        // let geolocation = {}
+        // let location
+        const storeImage = async () => {
+            const storage = getStorage();
+            const filename = `${auth.currentUser.uid}-${image.name}`
 
+        }
+        const imgUrls = await Promise.all(
+            [...images].map((image) => storeImage(image)).catch((error) => {
+                setLoading(false);
+                toast.error('Images not uploaded');
+                return
+            })
+        )
     }
+
     if (loading) {
         return <Spinner />
     }
