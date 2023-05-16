@@ -22,7 +22,7 @@ import {
 } from "react-icons/fa";
 import { getAuth } from "firebase/auth";
 import Contact from "../components/Contact";
-// import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
+import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 
 export default function Listing() {
     const auth = getAuth();
@@ -149,9 +149,9 @@ export default function Listing() {
                         <Contact userRef={listing.userRef} listing={listing} />
                     )}
                 </div>
-                {/* <div className="w-full h-[200px] md:h-[400px] z-10 overflow-x-hidden mt-6 md:mt-0 md:ml-2">
+                <div className="w-full h-[200px] md:h-[400px] z-10 overflow-x-hidden mt-6 md:mt-0 md:ml-2">
                     <MapContainer
-                        center={[listing.geolocation.lat, listing.geolocation.lng]}
+                        center={[9.061642954351017, 7.421741821547859]}
                         zoom={13}
                         scrollWheelZoom={false}
                         style={{ height: "100%", width: "100%" }}
@@ -161,14 +161,14 @@ export default function Listing() {
                             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                         />
                         <Marker
-                            position={[listing.geolocation.lat, listing.geolocation.lng]}
+                            position={[9.061642954351017, 7.421741821547859]}
                         >
                             <Popup>
                                 {listing.address}
                             </Popup>
                         </Marker>
                     </MapContainer>
-                </div> */}
+                </div>
             </div>
         </main>
     );
