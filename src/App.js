@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import Offers from "./pages/Offers";
+import Category from "./pages/Category";
 import ForgotPassword from "./pages/ForgotPassword";
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
@@ -27,6 +28,7 @@ function App() {
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/category/:categoryName/:listingId" element={<Listing />} />
           <Route path="/offers" element={<Offers />} />
+          <Route path="/category/:categoryName" element={<Category />} />
           <Route path="/create-listing" element={<PrivateRoute />} >
             <Route path="/create-listing" element={<CreateListing />} />
           </Route>
