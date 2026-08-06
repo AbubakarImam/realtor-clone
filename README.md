@@ -1,4 +1,11 @@
-# Getting Started with Create React App
+# Registry (realtor-clone)
+
+The frontend for Registry, a property listings marketplace. Its Firebase
+backend is being replaced by a dedicated API — see
+[**gida-api**](https://github.com/AbubakarImam/gida-api) for the NestJS +
+PostgreSQL backend and the architecture breakdown behind that move.
+
+## Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
