@@ -17,7 +17,7 @@ const YES_NO = [
 const CreateListing = () => {
     const navigate = useNavigate();
     const auth = getAuth();
-    const [geolocationEnabled, setGeolocationEnabled] = useState(true);
+    const [geolocationEnabled] = useState(true);
     const [loading, setLoading] = useState(false)
     const [formData, setFormData] = useState({
         type: "rent",
@@ -88,6 +88,8 @@ const CreateListing = () => {
                                 break;
                             case 'running':
                                 console.log('Upload is running');
+                                break;
+                            default:
                                 break;
                         }
                     },

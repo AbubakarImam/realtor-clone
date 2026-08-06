@@ -4,7 +4,7 @@ import Spinner from '../components/Spinner';
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { getAuth } from 'firebase/auth';
 import { v4 as uuidv4 } from 'uuid'
-import { addDoc, collection, serverTimestamp, doc, getDoc, updateDoc } from 'firebase/firestore';
+import { serverTimestamp, doc, getDoc, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase'
 import { useNavigate, useParams } from 'react-router';
 import SegmentToggle from '../components/ui/SegmentToggle';
@@ -17,7 +17,7 @@ const YES_NO = [
 const EditListing = () => {
     const navigate = useNavigate();
     const auth = getAuth();
-    const [geolocationEnabled, setGeolocationEnabled] = useState(true);
+    const [geolocationEnabled] = useState(true);
     const [loading, setLoading] = useState(false);
     const [listing, setListing] = useState(null);
     const [formData, setFormData] = useState({
@@ -116,6 +116,8 @@ const EditListing = () => {
                                 break;
                             case 'running':
                                 console.log('Upload is running');
+                                break;
+                            default:
                                 break;
                         }
                     },
