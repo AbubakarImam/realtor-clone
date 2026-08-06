@@ -5,49 +5,51 @@ import { toast } from "react-toastify";
 import { db } from "../firebase";
 
 export default function Contact({ userRef, listing }) {
-    const [landlord, setLandlord] = useState(null);
-    const [message, setMessage] = useState("");
-    useEffect(() => {
-        async function getLandlord() {
-            const docRef = doc(db, "users", userRef);
-            const docSnap = await getDoc(docRef);
-            if (docSnap.exists()) {
-                setLandlord(docSnap.data());
-            } else {
-                toast.error("Could not get landlord data");
-            }
-        }
-        getLandlord();
-    }, [userRef]);
-    function onChange(e) {
-        setMessage(e.target.value);
+  const [landlord, setLandlord] = useState(null);
+  const [message, setMessage] = useState("");
+  useEffect(() => {
+    async function getLandlord() {
+      const docRef = doc(db, "users", userRef);
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        setLandlord(docSnap.data());
+      } else {
+        toast.error("Could not get landlord data");
+      }
     }
-    return (
-        <>
-            {landlord !== null && (
-                <div className="flex flex-col w-full">
-                    <p>
-                        Contact {landlord.name} for the {listing.name.toLowerCase()}
-                    </p>
-                    <div className="mt-3 mb-6">
-                        <textarea
-                            name="message"
-                            id="message"
-                            rows="2"
-                            value={message}
-                            onChange={onChange}
-                            className="w-full px-4 py-2 text-xl text-gray-700 bg-white border border-gray-300 rounded transition duration-150 ease-in-out focus:text-gray-700 focus:bg-white focus:border-slate-600"
-                        ></textarea>
-                    </div>
-                    <a
-                        href={`mailto:${landlord.email}?Subject=${listing.name}&body=${message}`}
-                    >
-                        <button className="px-7 py-3 bg-blue-600 text-white rounded text-sm uppercase shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out w-full text-center mb-6" type="button">
-                            Send Message
-                        </button>
-                    </a>
-                </div>
-            )}
-        </>
-    );
+    getLandlord();
+  }, [userRef]);
+  function onChange(e) {
+    setMessage(e.target.value);
+  }
+  return (
+    <>
+      {landlord !== null && (
+        <div className="flex flex-col w-full border-t border-paper-line pt-4 mt-4">
+          <p className="field-label text-ink-faint mb-2">Record Request</p>
+          <p className="text-ink-soft mb-3">
+            Contact <span className="font-semibold text-ink">{landlord.name}</span> about{" "}
+            {listing.name.toLowerCase()}
+          </p>
+          <textarea
+            name="message"
+            id="message"
+            rows="3"
+            value={message}
+            onChange={onChange}
+            placeholder="Write your message..."
+            className="ledger-input mb-4"
+          ></textarea>
+          <a href={`mailto:${landlord.email}?Subject=${listing.name}&body=${message}`}>
+            <button
+              type="button"
+              className="w-full px-7 py-3 bg-registry text-paper font-mono font-semibold text-xs uppercase tracking-stamped rounded-sm hover:bg-registry-dark transition-colors duration-150 ease-in-out"
+            >
+              Send message
+            </button>
+          </a>
+        </div>
+      )}
+    </>
+  );
 }

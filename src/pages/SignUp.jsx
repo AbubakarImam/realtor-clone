@@ -10,6 +10,7 @@ import { db } from "../firebase";
 import { doc, serverTimestamp, setDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import DeedIllustration from "../components/DeedIllustration";
 
 export default function SignUp() {
 
@@ -52,76 +53,75 @@ export default function SignUp() {
   }
 
   return (
-    <section>
-      <h1 className='text-3xl text-center mt-6 font-bold'>
-        Sign Up
-      </h1>
-      <div className='flex justify-center flex-wrap items-center px-6 py-12
-      max-w-6xl mx-auto'>
-        <div className='md:w-[67%] lg:w-[50%] mb-12 md:mb-6'>
-          <img src={process.env.PUBLIC_URL + '/key.jpg'} alt="key"
-            className='w-full rounded-2xl' />
+    <section className="max-w-6xl mx-auto px-4 sm:px-6">
+      <div className="border-b-2 border-ink pb-4 pt-8 mb-8 px-1">
+        <h1 className="text-2xl sm:text-3xl font-semibold text-ink">Register with the registry</h1>
+      </div>
+      <div className='flex justify-center flex-wrap items-start gap-10 lg:gap-16 pb-16'>
+        <div className='w-full md:w-[60%] lg:w-[42%]'>
+          <DeedIllustration className="w-full rounded-sm ledger-card p-0" />
         </div>
-        <div className='w-full md:w-[67%] lg:w-[40%] lg:ml-20'>
-          <form onSubmit={handleSubmit}>
-            <input className='w-full px-4 py-2 text-xl text-gray-700 mb-6 bg-white
-            rounded border-gray-300 transition ease-in-out'
-              type="text"
-              placeholder="Full name"
-              id="name"
-              value={name}
-              onChange={onChange} />
-            <input className='w-full px-4 py-2 text-xl text-gray-700 mb-6 bg-white
-            rounded border-gray-300 transition ease-in-out'
-              type="email"
-              placeholder="Email"
-              id="email"
-              value={email}
-              onChange={onChange} />
-            <div className="relative mb-6">
-              <input className='w-full px-4 py-2 text-xl text-gray-700 bg-white
-            rounded border-gray-300 transition ease-in-out'
-                type={showPassword ? "text" : "password"}
-                placeholder="Password"
-                id="password"
-                value={password}
+        <div className='w-full md:w-[60%] lg:w-[38%]'>
+          <form onSubmit={handleSubmit} className="ledger-card p-6 sm:p-7 space-y-5">
+            <div>
+              <p className="field-label mb-2">Full name</p>
+              <input className='ledger-input'
+                type="text"
+                placeholder="Full name"
+                id="name"
+                value={name}
                 onChange={onChange} />
-              {showPassword ? (
-                <AiFillEyeInvisible className="absolute right-3 top-3 text-xl cursor-pointer"
-                  onClick={() => setShowPassword(!showPassword)} />
-              ) : (
-                <AiFillEye className="absolute right-3 top-3 text-xl cursor-pointer"
-                  onClick={() => setShowPassword(!showPassword)} />
-              )}
             </div>
-            <div className="flex justify-between whitespace-nowrap
-             text-sm sm:text-lg">
-              <p className="mb-6">Have an account?
+            <div>
+              <p className="field-label mb-2">Email</p>
+              <input className='ledger-input'
+                type="email"
+                placeholder="you@example.com"
+                id="email"
+                value={email}
+                onChange={onChange} />
+            </div>
+            <div>
+              <p className="field-label mb-2">Password</p>
+              <div className="relative">
+                <input className='ledger-input pr-11'
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Password"
+                  id="password"
+                  value={password}
+                  onChange={onChange} />
+                {showPassword ? (
+                  <AiFillEyeInvisible className="absolute right-3.5 top-1/2 -translate-y-1/2 text-lg text-ink-faint cursor-pointer"
+                    onClick={() => setShowPassword(!showPassword)} />
+                ) : (
+                  <AiFillEye className="absolute right-3.5 top-1/2 -translate-y-1/2 text-lg text-ink-faint cursor-pointer"
+                    onClick={() => setShowPassword(!showPassword)} />
+                )}
+              </div>
+            </div>
+            <div className="flex justify-between flex-wrap gap-2 text-sm">
+              <p className="text-ink-soft">Have an account?
                 <Link to="/sign-in"
-                  className="text-red-600 hover:text-red-700 
-                transition duration-200 ease-in-out ml-1"
+                  className="text-stamp hover:text-stamp-dark font-semibold transition-colors duration-150 ease-in-out ml-1"
                 >
                   Sign in
                 </Link>
               </p>
-              <p>
-                <Link to="/forgot-password"
-                  className="text-blue-600 hover:text-blue-800 
-                transition duration-200 ease-in-out">Forgot
-                  password</Link>
-              </p>
+              <Link to="/forgot-password"
+                className="text-registry hover:text-registry-dark font-semibold transition-colors duration-150 ease-in-out">
+                Forgot password
+              </Link>
             </div>
-            <button className="w-full bg-blue-600 text-white px-7 py-3
-          text-sm font-medium uppercase rounded shadow-md 
-          hover:bg-blue-700 transition duration-150 ease-in-out hover:shadow-lg
-          active:bg-blue-800"
+            <button className="w-full bg-stamp text-paper px-7 py-3
+          font-mono text-xs font-semibold uppercase tracking-stamped rounded-sm shadow-stamp
+          hover:bg-stamp-dark transition-colors duration-150 ease-in-out"
               type="submit">
               Sign up
             </button>
-            <div className="flex items-center my-4 
-          before:border-t before:flex-1 before:border-gray-300
-          after:border-t after:flex-1 aftere:border-gray-300">
-              <p className="text-center font-semibold mx-4">OR</p>
+            <div className="flex items-center gap-3">
+              <div className="flex-1 h-px bg-paper-line" />
+              <p className="field-label text-ink-faint">Or</p>
+              <div className="flex-1 h-px bg-paper-line" />
             </div>
             <OAuth />
           </form>

@@ -15,8 +15,6 @@ const OAuth = () => {
       const result = await signInWithPopup(auth, provider)
       const user = result.user
 
-      // check for user in database
-
       const docRef = doc(db, "users", user.uid);
       const docSnap = await getDoc(docRef);
 
@@ -34,13 +32,11 @@ const OAuth = () => {
   }
   return (
     <button type="button" onClick={onGoogleClick}
-      className="flex items-center justify-center
-    w-full bg-red-700 text-white px-7 py-3
-    uppercase text-sm font-medium hover:bg-red-800
-    active:bg-red-900 shadow-md hover:shadow-lg
-    active:shadow-lg transition duration-150 ease-in-out
-    rounded">
-      <FcGoogle className="text-2xl bg-white rounded-full mr-2" />
+      className="flex items-center justify-center gap-2.5
+    w-full bg-white border border-ink/20 text-ink px-7 py-3
+    font-mono uppercase text-xs font-semibold tracking-stamped hover:bg-paper-deep
+    transition-colors duration-150 ease-in-out rounded-sm">
+      <FcGoogle className="text-xl" />
       Continue with Google
     </button>
   )

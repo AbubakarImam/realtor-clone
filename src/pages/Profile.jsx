@@ -5,8 +5,8 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router';
 import { toast } from 'react-toastify';
 import { Link } from 'react-router-dom';
-import { FcHome } from 'react-icons/fc';
 import ListingItem from '../components/ListingItem'
+import Spinner from '../components/Spinner';
 
 export default function Profile() {
   const auth = getAuth()
@@ -33,11 +33,9 @@ export default function Profile() {
   const onSubmit = async () => {
     try {
       if (auth.currentUser.displayName !== name) {
-        /// Update display name in firebase auth
         await updateProfile(auth.currentUser, {
           displayName: name
         })
-        /// Update name in firestore
         const docRef = doc(db, "users", auth.currentUser.uid);
         await updateDoc(docRef, {
           name
@@ -46,7 +44,6 @@ export default function Profile() {
       toast.success("Profile updated")
     } catch (error) {
       toast.error("Could not update profile detail")
-
     }
   }
   useEffect(() => {
@@ -63,7 +60,6 @@ export default function Profile() {
           data: doc.data(),
         })
       });
-      console.log(listings)
       setListings(listings);
       setLoading(false)
     }
@@ -84,61 +80,69 @@ export default function Profile() {
   }
   return (
     <>
-      <section className="max-w-6xl mx-auto flex items-center justify-center flex-col">
-        <h1 className="text-3xl text-center mt-6 font-bold">
-          My Profile
-        </h1>
-        <div className="w-full md:[50%] mt-6 px-3">
-          <form>
-            {/* Name input */}
+      <section className="max-w-2xl mx-auto px-4 sm:px-6">
+        <div className="border-b-2 border-ink pb-4 pt-8 mb-8 px-1">
+          <h1 className="text-2xl sm:text-3xl font-semibold text-ink">Your account</h1>
+        </div>
 
-            <input
-              type="text" id='name'
-              value={name} disabled={!changeDetail}
-              onChange={onChange}
-              className={`w-full rounded px-4 py-2 text-xl text-gray-500 border border-gray-300 
-            bg-white transition ease-in-out mb-6 
-            ${changeDetail && 'bg-red-200 focus:bg-red-200'}`} />
-            {/* Email input */}
+        <div className="ledger-card p-5 sm:p-8">
+          <form className="space-y-5">
+            <div>
+              <p className="field-label mb-2">Full name</p>
+              <input
+                type="text" id='name'
+                value={name} disabled={!changeDetail}
+                onChange={onChange}
+                className={`ledger-input ${changeDetail ? 'bg-paper-deep' : 'text-ink-soft'}`} />
+            </div>
+            <div>
+              <p className="field-label mb-2">Email</p>
+              <input type="email" id='email' value={email} disabled
+                className='ledger-input text-ink-faint' />
+            </div>
 
-            <input type="email" id='email' value={email} disabled
-              className='w-full rounded px-4 py-2 text-xl text-gray-500 border border-gray-300 
-            bg-white transition ease-in-out mb-6' />
-
-            <div className="flex justify-between whitespace-nowrap text-sm sm:text-lg mb-6">
-              <p className='flex items-center'>Do you want to change your name?
-                <span onClick={() => {
-                  changeDetail && onSubmit();
-                  setChangeDetail((prev) => !prev)
-                }}
-                  className='text-red-600 hover:text-red-700
-              transition ease-in-out duration-200 ml-1 cursor-pointer'>
-                  {changeDetail ? "Apply Change" : "Edit"}
-                </span>
+            <div className="flex justify-between items-center flex-wrap gap-3 text-sm pt-1">
+              <p className='flex items-center gap-1 text-ink-soft'>
+                Change your name?
+                <button
+                  type="button"
+                  onClick={() => {
+                    changeDetail && onSubmit();
+                    setChangeDetail((prev) => !prev)
+                  }}
+                  className='text-stamp hover:text-stamp-dark font-semibold transition-colors duration-150 ease-in-out ml-1'>
+                  {changeDetail ? "Apply change" : "Edit"}
+                </button>
               </p>
-              <p onClick={onLogOut} className='text-blue-600 hover:text-blue-800
-            transition ease-in-out duration-200 cursor-pointer'>Sign out</p>
+              <button
+                type="button"
+                onClick={onLogOut}
+                className='text-registry hover:text-registry-dark font-semibold transition-colors duration-150 ease-in-out'>
+                Sign out
+              </button>
             </div>
           </form>
-          <button type="submit" className='w-full bg-blue-600 px-7
-        uppercase text-white py-3 hover:bg-blue-700 active:bg-blue-800
-        rounded shadow-sm'>
-            <Link to={'/create-listing'} className='flex items-center justify-center text-sm
-          font-medium'>
-              <FcHome className='mr-2 text-3xl bg-red-200 p-1 border-2 rounded-full' />
-              sell or rent your home
-            </Link>
-          </button>
         </div>
+
+        <Link
+          to={'/create-listing'}
+          className='mt-4 flex items-center justify-center gap-2 w-full bg-stamp text-paper
+          font-mono font-semibold text-xs uppercase tracking-stamped py-3.5 rounded-sm shadow-stamp
+          hover:bg-stamp-dark transition-colors duration-150 ease-in-out'>
+          File a new record &mdash; sell or rent your home
+        </Link>
       </section>
-      <div className="max-w-6xl px-3 mt-6 mx-auto">
-        {!loading && listings.length > 0 && (
+
+      <div className="max-w-6xl px-3 sm:px-6 mt-12 mx-auto">
+        {loading ? (
+          <Spinner />
+        ) : listings && listings.length > 0 ? (
           <>
-            <h2 className="text-2xl text-center font-semibold mb-6">
-              My Listings
-            </h2>
-            <ul className="sm:grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5
-            mt-6 mb-6">
+            <div className="flex items-baseline gap-3 border-b-2 border-ink pb-3 mb-1 px-1">
+              <span className="record-number text-xs text-ink-faint">Bk. My</span>
+              <h2 className="text-xl sm:text-2xl font-semibold text-ink">Your filed records</h2>
+            </div>
+            <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
               {listings.map((listing) => (
                 <ListingItem key={listing.id}
                   id={listing.id}
@@ -148,6 +152,13 @@ export default function Profile() {
               ))}
             </ul>
           </>
+        ) : (
+          listings && (
+            <div className="text-center py-16">
+              <p className="field-label text-ink-faint mb-2">Registry Empty</p>
+              <p className="text-ink-soft">You haven't filed any records yet.</p>
+            </div>
+          )
         )}
       </div>
     </>

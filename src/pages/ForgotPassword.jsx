@@ -3,6 +3,7 @@ import { useState } from "react"
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import OAuth from "../components/OAuth";
+import DeedIllustration from "../components/DeedIllustration";
 
 
 export default function ForgotPassword() {
@@ -14,60 +15,52 @@ export default function ForgotPassword() {
       const auth = getAuth();
       await sendPasswordResetEmail(auth, email);
       toast.success('Reset email sent')
-
     } catch (error) {
       toast.error('Reset email not sent')
-
     }
   }
 
   return (
-    <section>
-      <h1 className='text-3xl text-center mt-6 font-bold'>
-        Forgot Password
-      </h1>
-      <div className='flex justify-center flex-wrap items-center px-6 py-12
-      max-w-6xl mx-auto'>
-        <div className='md:w-[67%] lg:w-[50%] mb-12 md:mb-6'>
-          <img src={process.env.PUBLIC_URL + '/key.jpg'} alt="key"
-            className='w-full rounded-2xl' />
+    <section className="max-w-6xl mx-auto px-4 sm:px-6">
+      <div className="border-b-2 border-ink pb-4 pt-8 mb-8 px-1">
+        <h1 className="text-2xl sm:text-3xl font-semibold text-ink">Reset your password</h1>
+      </div>
+      <div className='flex justify-center flex-wrap items-start gap-10 lg:gap-16 pb-16'>
+        <div className='w-full md:w-[60%] lg:w-[42%]'>
+          <DeedIllustration className="w-full rounded-sm ledger-card p-0" />
         </div>
-        <div className='w-full md:w-[67%] lg:w-[40%] lg:ml-20'>
-          <form onSubmit={onSubmit}>
-            <input className='w-full px-4 py-2 text-xl text-gray-700 mb-6 bg-white
-            rounded border-gray-300 transition ease-in-out'
-              type="email"
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)} />
+        <div className='w-full md:w-[60%] lg:w-[38%]'>
+          <form onSubmit={onSubmit} className="ledger-card p-6 sm:p-7 space-y-5">
+            <div>
+              <p className="field-label mb-2">Email</p>
+              <input className='ledger-input'
+                type="email"
+                placeholder="you@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)} />
+            </div>
 
-            <div className="flex justify-between whitespace-nowrap
-             text-sm sm:text-lg">
-              <p className="mb-6">Don't have a account?
+            <div className="flex justify-between flex-wrap gap-2 text-sm">
+              <p className="text-ink-soft">Don't have an account?
                 <Link to="/sign-up"
-                  className="text-red-600 hover:text-red-700 
-                transition duration-200 ease-in-out ml-1"
+                  className="text-stamp hover:text-stamp-dark font-semibold transition-colors duration-150 ease-in-out ml-1"
                 >Register</Link>
               </p>
-              <p>
-                <Link to="/sign-in"
-                  className="text-blue-600 hover:text-blue-800 
-                transition duration-200 ease-in-out">
-                  Sign in instead
-                </Link>
-              </p>
+              <Link to="/sign-in"
+                className="text-registry hover:text-registry-dark font-semibold transition-colors duration-150 ease-in-out">
+                Sign in instead
+              </Link>
             </div>
-            <button className="w-full bg-blue-600 text-white px-7 py-3
-          text-sm font-medium uppercase rounded shadow-md 
-          hover:bg-blue-700 transition duration-150 ease-in-out hover:shadow-lg
-          active:bg-blue-800"
+            <button className="w-full bg-stamp text-paper px-7 py-3
+          font-mono text-xs font-semibold uppercase tracking-stamped rounded-sm shadow-stamp
+          hover:bg-stamp-dark transition-colors duration-150 ease-in-out"
               type="submit">
-              Send reset password
+              Send reset link
             </button>
-            <div className="flex items-center my-4 
-          before:border-t before:flex-1 before:border-gray-300
-          after:border-t after:flex-1 aftere:border-gray-300">
-              <p className="text-center font-semibold mx-4">OR</p>
+            <div className="flex items-center gap-3">
+              <div className="flex-1 h-px bg-paper-line" />
+              <p className="field-label text-ink-faint">Or</p>
+              <div className="flex-1 h-px bg-paper-line" />
             </div>
             <OAuth />
           </form>

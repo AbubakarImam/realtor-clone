@@ -1,6 +1,5 @@
 import {
   collection,
-  getDoc,
   getDocs,
   limit,
   orderBy,
@@ -14,22 +13,42 @@ import ListingItem from "../components/ListingItem";
 import Slider from "../components/Slider";
 import { db } from "../firebase";
 
+function LedgerBook({ number, title, viewAllPath, viewAllLabel, listings }) {
+  return (
+    <section className="mb-14">
+      <div className="flex items-end justify-between border-b-2 border-ink pb-3 mb-1 px-1">
+        <div className="flex items-baseline gap-3">
+          <span className="record-number text-xs text-ink-faint">{number}</span>
+          <h2 className="text-xl sm:text-2xl font-semibold text-ink">{title}</h2>
+        </div>
+        <Link
+          to={viewAllPath}
+          className="field-label text-registry hover:text-registry-dark transition-colors duration-150 whitespace-nowrap"
+        >
+          {viewAllLabel} &rarr;
+        </Link>
+      </div>
+      <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        {listings.map((listing) => (
+          <ListingItem key={listing.id} listing={listing.data} id={listing.id} />
+        ))}
+      </ul>
+    </section>
+  );
+}
+
 export default function Home() {
-  // Offers
   const [offerListings, setOfferListings] = useState(null);
   useEffect(() => {
     async function fetchListings() {
       try {
-        // get reference
         const listingsRef = collection(db, "listings");
-        // create the query
         const q = query(
           listingsRef,
           where("offer", "==", true),
           orderBy("timestamp", "desc"),
           limit(4)
         );
-        // execute the query
         const querySnap = await getDocs(q);
         const listings = [];
         querySnap.forEach((doc) => {
@@ -45,21 +64,18 @@ export default function Home() {
     }
     fetchListings();
   }, []);
-  // Places for rent
+
   const [rentListings, setRentListings] = useState(null);
   useEffect(() => {
     async function fetchListings() {
       try {
-        // get reference
         const listingsRef = collection(db, "listings");
-        // create the query
         const q = query(
           listingsRef,
           where("type", "==", "rent"),
           orderBy("timestamp", "desc"),
           limit(4)
         );
-        // execute the query
         const querySnap = await getDocs(q);
         const listings = [];
         querySnap.forEach((doc) => {
@@ -75,21 +91,18 @@ export default function Home() {
     }
     fetchListings();
   }, []);
-  // Places for rent
+
   const [saleListings, setSaleListings] = useState(null);
   useEffect(() => {
     async function fetchListings() {
       try {
-        // get reference
         const listingsRef = collection(db, "listings");
-        // create the query
         const q = query(
           listingsRef,
           where("type", "==", "sale"),
           orderBy("timestamp", "desc"),
           limit(4)
         );
-        // execute the query
         const querySnap = await getDocs(q);
         const listings = [];
         querySnap.forEach((doc) => {
@@ -105,65 +118,47 @@ export default function Home() {
     }
     fetchListings();
   }, []);
+
+  const noListings =
+    offerListings?.length === 0 &&
+    rentListings?.length === 0 &&
+    saleListings?.length === 0;
+
   return (
     <div>
       <Slider />
-      <div className="max-w-6xl mx-auto pt-4 space-y-6">
+      <div className="max-w-6xl mx-auto px-3 sm:px-6 pt-10">
         {offerListings && offerListings.length > 0 && (
-          <div className="m-2 mb-6">
-            <h2 className="px-3 text-2xl mt-6 font-semibold">Recent offers</h2>
-            <Link to="/offers">
-              <p className="px-3 text-sm text-blue-600 hover:text-blue-800 transition duration-150 ease-in-out">
-                Show more offers
-              </p>
-            </Link>
-            <ul className="sm:grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 ">
-              {offerListings.map((listing) => (
-                <ListingItem
-                  key={listing.id}
-                  listing={listing.data}
-                  id={listing.id}
-                />
-              ))}
-            </ul>
-          </div>
+          <LedgerBook
+            number="Bk. I"
+            title="Recent offers"
+            viewAllPath="/offers"
+            viewAllLabel="Full ledger"
+            listings={offerListings}
+          />
         )}
         {rentListings && rentListings.length > 0 && (
-          <div className="m-2 mb-6">
-            <h2 className="px-3 text-2xl mt-6 font-semibold">Places for rent</h2>
-            <Link to="/category/rent">
-              <p className="px-3 text-sm text-blue-600 hover:text-blue-800 transition duration-150 ease-in-out">
-                Show more places for rent
-              </p>
-            </Link>
-            <ul className="sm:grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 ">
-              {rentListings.map((listing) => (
-                <ListingItem
-                  key={listing.id}
-                  listing={listing.data}
-                  id={listing.id}
-                />
-              ))}
-            </ul>
-          </div>
+          <LedgerBook
+            number="Bk. II"
+            title="Places for rent"
+            viewAllPath="/category/rent"
+            viewAllLabel="Full ledger"
+            listings={rentListings}
+          />
         )}
         {saleListings && saleListings.length > 0 && (
-          <div className="m-2 mb-6">
-            <h2 className="px-3 text-2xl mt-6 font-semibold">Places for sale</h2>
-            <Link to="/category/sale">
-              <p className="px-3 text-sm text-blue-600 hover:text-blue-800 transition duration-150 ease-in-out">
-                Show more places for sale
-              </p>
-            </Link>
-            <ul className="sm:grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 ">
-              {saleListings.map((listing) => (
-                <ListingItem
-                  key={listing.id}
-                  listing={listing.data}
-                  id={listing.id}
-                />
-              ))}
-            </ul>
+          <LedgerBook
+            number="Bk. III"
+            title="Places for sale"
+            viewAllPath="/category/sale"
+            viewAllLabel="Full ledger"
+            listings={saleListings}
+          />
+        )}
+        {noListings && (
+          <div className="text-center py-20">
+            <p className="field-label text-ink-faint mb-2">Registry Empty</p>
+            <p className="text-ink-soft">No records have been filed yet.</p>
           </div>
         )}
       </div>

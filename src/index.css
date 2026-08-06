@@ -2,23 +2,126 @@
 @tailwind components;
 @tailwind utilities;
 
-body{
-    background-color: rgb(240, 253, 244);
+:root {
+  color-scheme: light;
 }
 
+html {
+  scrollbar-width: none;
+}
+
+html::-webkit-scrollbar {
+  display: none;
+}
+
+body {
+  background-color: theme("colors.paper.DEFAULT");
+  background-image: theme("backgroundImage.parcel-grid");
+  background-size: 44px 44px;
+  background-position: -1px -1px;
+  color: theme("colors.ink.DEFAULT");
+  font-family: theme("fontFamily.sans");
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background-color: theme("colors.stamp.DEFAULT");
+  color: theme("colors.paper.DEFAULT");
+}
+
+*:focus-visible {
+  outline: 2px solid theme("colors.registry.DEFAULT");
+  outline-offset: 2px;
+}
+
+/* Parcel-grid ground: the survey sheet behind hero and record surfaces */
+.parcel-grid-bg {
+  background-color: theme("colors.paper.DEFAULT");
+  background-image: theme("backgroundImage.parcel-grid");
+  background-size: 44px 44px;
+  background-position: -1px -1px;
+}
+
+.parcel-grid-bg-deep {
+  background-color: theme("colors.paper.deep");
+  background-image: theme("backgroundImage.parcel-grid");
+  background-size: 32px 32px;
+  background-position: -1px -1px;
+}
+
+/* Ledger surface: the paper the record sits on */
+.ledger-card {
+  background-color: #fff;
+  border: 1px solid theme("colors.paper.line");
+  box-shadow: theme("boxShadow.ledger");
+}
+
+/* Ink-stamped status seal, canted like a rubber stamp landed by hand */
+.stamp-seal {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: theme("fontFamily.mono");
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: theme("letterSpacing.stamped");
+  text-transform: uppercase;
+  padding: 0.2rem 0.55rem;
+  border: 1.5px solid currentColor;
+  border-radius: 2px;
+  transform: rotate(-2deg);
+  white-space: nowrap;
+}
+
+.field-label {
+  font-family: theme("fontFamily.mono");
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: theme("letterSpacing.stamped");
+  text-transform: uppercase;
+  color: theme("colors.ink.soft");
+}
+
+.ledger-input {
+  width: 100%;
+  background-color: #fff;
+  border: 1px solid theme("colors.paper.line");
+  border-radius: 2px;
+  padding: 0.65rem 0.85rem;
+  font-size: 1rem;
+  color: theme("colors.ink.DEFAULT");
+  transition: border-color 150ms ease-in-out, box-shadow 150ms ease-in-out;
+}
+
+.ledger-input:focus {
+  border-color: theme("colors.registry.DEFAULT");
+  box-shadow: 0 0 0 3px rgba(43, 74, 94, 0.15);
+  outline: none;
+}
+
+.record-number {
+  font-family: theme("fontFamily.mono");
+  font-variant-numeric: tabular-nums;
+}
+
+/* Swiper: recast the default teal accents in the registry's own ink */
 .swiper-button-next:after,
-.swiper-button-prev:after{
-    color: #a8dadc;
+.swiper-button-prev:after {
+  color: #fff;
+  font-size: 1.1rem !important;
+  background-color: theme("colors.ink.DEFAULT");
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.swiper-pagination-progressbar .swiper-pagination-progressbar-fill{
-    background: #a8dadc !important
+.swiper-pagination-progressbar {
+  background: rgba(255, 255, 255, 0.35) !important;
 }
 
-html::-webkit-scrollbar{
-    display: none;
-}
-
-html{
-    scrollbar-width: none;
+.swiper-pagination-progressbar .swiper-pagination-progressbar-fill {
+  background: theme("colors.stamp.DEFAULT") !important;
 }
