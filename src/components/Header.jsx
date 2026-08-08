@@ -34,7 +34,7 @@ const Header = () => {
         >
           <RegistryMark className="h-7 w-7 sm:h-8 sm:w-8 text-ink" />
           <span className="hidden sm:inline font-mono text-sm font-semibold uppercase tracking-stamped">
-            Registry
+            GidaListing
           </span>
         </button>
 

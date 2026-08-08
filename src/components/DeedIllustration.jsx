@@ -60,10 +60,11 @@ const DeedIllustration = ({ className = "" }) => (
           y="12"
           textAnchor="middle"
           fontFamily="'IBM Plex Mono', monospace"
-          fontSize="8"
+          fontSize="6.5"
+          letterSpacing="0.5"
           fill="#B3261E"
         >
-          REGISTRY
+          GIDALISTING
         </text>
       </g>
     </g>

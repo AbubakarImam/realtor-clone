@@ -55,7 +55,7 @@ export default function SignUp() {
   return (
     <section className="max-w-6xl mx-auto px-4 sm:px-6">
       <div className="border-b-2 border-ink pb-4 pt-8 mb-8 px-1">
-        <h1 className="text-2xl sm:text-3xl font-semibold text-ink">Register with the registry</h1>
+        <h1 className="text-2xl sm:text-3xl font-semibold text-ink">Create your GidaListing account</h1>
       </div>
       <div className='flex justify-center flex-wrap items-start gap-10 lg:gap-16 pb-16'>
         <div className='w-full md:w-[60%] lg:w-[42%]'>

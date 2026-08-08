@@ -1,13 +1,13 @@
-# Registry (realtor-clone)
+# GidaListing (realtor-clone)
 
-The frontend for Registry, a property listings marketplace. Its Firebase
+The frontend for GidaListing, a property listings marketplace. Its Firebase
 backend is being replaced by a dedicated API — see
 [**gida-api**](https://github.com/AbubakarImam/gida-api) for the NestJS +
 PostgreSQL backend and the architecture breakdown behind that move.
 
 For how this app is put together — every route, every shared component — and
 a page-by-page map of what each screen calls today (Firebase) versus the
-Registry API endpoint that will replace it, see
+GidaListing API endpoint that will replace it, see
 [**Pages, Components & the Path to the API**](https://claude.ai/code/artifact/6814ea7c-2807-426f-b1f8-b5b1c5013972).
 
 ## Getting Started with Create React App

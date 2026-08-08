@@ -157,7 +157,7 @@ export default function Home() {
         )}
         {noListings && (
           <div className="text-center py-20">
-            <p className="field-label text-ink-faint mb-2">Registry Empty</p>
+            <p className="field-label text-ink-faint mb-2">Ledger Empty</p>
             <p className="text-ink-soft">No records have been filed yet.</p>
           </div>
         )}

@@ -1,5 +1,5 @@
 ---
-name: Registry
+name: GidaListing
 description: A property marketplace that reads as a county land-records office — parcel grids, ink stamps, and ledger rows.
 colors:
   paper: "#F3F4EF"
@@ -64,13 +64,13 @@ components:
     padding: "{spacing.card-padding}"
 ---
 
-# Design System: Registry
+# Design System: GidaListing
 
 ## Overview
 
 **Creative North Star: "The County Land-Records Office"**
 
-Registry treats a real-estate marketplace as a system of record rather than a storefront. Every listing is a filed document: it carries a record number, a status seal, and a parcel diagram, and the surrounding chrome — navigation, cards, forms — borrows its grammar from cadastral survey sheets, ink rubber stamps, and ledger books rather than from real-estate-SaaS templates (rounded hero cards, blue-and-white gradients, big search bars). The world was assigned by the impeccable skill's direction-seeding script against grounded candidates derived from the product's own domain (property surveys, deed offices, parcel maps), chosen over catalog challengers on audience fit and product clarity for a real-estate task.
+GidaListing treats a real-estate marketplace as a system of record rather than a storefront. Every listing is a filed document: it carries a record number, a status seal, and a parcel diagram, and the surrounding chrome — navigation, cards, forms — borrows its grammar from cadastral survey sheets, ink rubber stamps, and ledger books rather than from real-estate-SaaS templates (rounded hero cards, blue-and-white gradients, big search bars). The world was assigned by the impeccable skill's direction-seeding script against grounded candidates derived from the product's own domain (property surveys, deed offices, parcel maps), chosen over catalog challengers on audience fit and product clarity for a real-estate task.
 
 Density stays high and functional — this is an Operate-mode surface (the visitor is completing a task: finding a home, filing a listing), so scanability and native form conventions always outrank expressive flourish. Brand personality lives in specific, restrained details: the stamp-red accent, the mono data typography, the canted status seals, the parcel-grid ground — never in decoration layered on top of the task.
 
@@ -116,14 +116,14 @@ The palette is Restrained: a cool neutral ground plus one committed accent, exte
 **Character:** A workhorse technical pairing, not a decorative one — Plex Sans reads like an official form's body copy, Plex Mono like a typewritten ledger entry or a rubber-stamp serial number. Both fonts are self-loaded from Google Fonts, never a system-font substitution.
 
 ### Hierarchy
-- **Headline** (600, 1.5–1.875rem, 1.25 line-height): page titles, section headers ("Sign in to the registry", "File a record").
+- **Headline** (600, 1.5–1.875rem, 1.25 line-height): page titles, section headers ("Sign in to GidaListing", "File a record").
 - **Title** (600, 1.125–1.25rem, 1.3): card/listing names, form section leads.
 - **Body** (400, 1rem, 1.6 line-height): descriptions, paragraph copy.
 - **Label** (600, 0.6875–0.75rem, 0.08em tracking, uppercase, mono): field labels, nav items, status seals, "field-label" meta captions.
 - **Record figure** (600, mono, tabular-nums): prices, record numbers, timestamps — anything that reads as recorded data rather than prose.
 
 ### Named Rules
-**The No-Kicker Rule.** No small caption ever sits stacked directly above a page or section heading. A heading states its own context; a "Registry Access" or "Ledger Volume" eyebrow over "Sign in" is chrome, not information, and is banned outright — carry the framing into the heading's own words instead ("Sign in to the registry").
+**The No-Kicker Rule.** No small caption ever sits stacked directly above a page or section heading. A heading states its own context; a "Registry Access" or "Ledger Volume" eyebrow over "Sign in" is chrome, not information, and is banned outright — carry the framing into the heading's own words instead ("Sign in to GidaListing").
 
 ## Layout
 

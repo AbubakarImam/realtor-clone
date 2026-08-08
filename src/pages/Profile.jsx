@@ -155,7 +155,7 @@ export default function Profile() {
         ) : (
           listings && (
             <div className="text-center py-16">
-              <p className="field-label text-ink-faint mb-2">Registry Empty</p>
+              <p className="field-label text-ink-faint mb-2">Ledger Empty</p>
               <p className="text-ink-soft">You haven't filed any records yet.</p>
             </div>
           )
