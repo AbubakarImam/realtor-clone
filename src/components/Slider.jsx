@@ -1,8 +1,7 @@
-import { collection, getDocs, limit, orderBy, query } from "firebase/firestore";
 import { useState } from "react";
 import { useEffect } from "react";
 import Spinner from "../components/Spinner";
-import { db } from "../firebase";
+import { getListings } from "../api/listings";
 import { Swiper, SwiperSlide } from "swiper/react";
 import SwiperCore, {
   EffectFade,
@@ -20,21 +19,9 @@ export default function Slider() {
   SwiperCore.use([Autoplay, Navigation, Pagination]);
   const navigate = useNavigate();
   useEffect(() => {
-    async function fetchListings() {
-      const listingsRef = collection(db, "listings");
-      const q = query(listingsRef, orderBy("timestamp", "desc"), limit(5));
-      const querySnap = await getDocs(q);
-      let listings = [];
-      querySnap.forEach((doc) => {
-        return listings.push({
-          id: doc.id,
-          data: doc.data(),
-        });
-      });
-      setListings(listings);
-      setLoading(false);
-    }
-    fetchListings();
+    getListings({ limit: 5 })
+      .then((res) => setListings(res.items))
+      .finally(() => setLoading(false));
   }, []);
   if (loading) {
     return <Spinner />;

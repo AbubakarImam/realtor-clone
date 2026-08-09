@@ -1,26 +1,27 @@
-import { getAuth, updateProfile } from 'firebase/auth';
-import { updateDoc, doc, collection, query, where, orderBy, getDocs, deleteDoc } from 'firebase/firestore';
-import { db } from '../firebase';
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router';
 import { toast } from 'react-toastify';
 import { Link } from 'react-router-dom';
 import ListingItem from '../components/ListingItem'
 import Spinner from '../components/Spinner';
+import { useAuth } from '../context/AuthContext';
+import { updateMe } from '../api/users';
+import { getListings, deleteListing } from '../api/listings';
+import { ApiError } from '../api/client';
 
 export default function Profile() {
-  const auth = getAuth()
   const navigate = useNavigate();
+  const { user, logout, refreshUser } = useAuth();
   const [changeDetail, setChangeDetail] = useState(false);
   const [listings, setListings] = useState(null)
   const [loading, setLoading] = useState(true)
   const [formData, setFormData] = useState({
-    name: auth.currentUser.displayName,
-    email: auth.currentUser.email
+    name: user.name,
+    email: user.email
   });
   const { name, email } = formData;
   const onLogOut = () => {
-    auth.signOut()
+    logout()
     navigate("/")
   }
 
@@ -32,47 +33,32 @@ export default function Profile() {
   }
   const onSubmit = async () => {
     try {
-      if (auth.currentUser.displayName !== name) {
-        await updateProfile(auth.currentUser, {
-          displayName: name
-        })
-        const docRef = doc(db, "users", auth.currentUser.uid);
-        await updateDoc(docRef, {
-          name
-        })
+      if (user.name !== name) {
+        await updateMe({ name })
+        await refreshUser()
       }
       toast.success("Profile updated")
     } catch (error) {
-      toast.error("Could not update profile detail")
+      toast.error(error instanceof ApiError ? error.message : "Could not update profile detail")
     }
   }
   useEffect(() => {
-    async function fetchUserListing() {
-      const listingRef = collection(db, 'listings');
-      const q = query(listingRef, where('userRef', '==', auth.currentUser.uid),
-        orderBy('timestamp', 'desc')
-      );
-      const querySnap = await getDocs(q);
-      let listings = [];
-      querySnap.forEach((doc) => {
-        return listings.push({
-          id: doc.id,
-          data: doc.data(),
-        })
-      });
-      setListings(listings);
-      setLoading(false)
-    }
-    fetchUserListing();
-  }, [auth.currentUser.uid])
+    getListings({ ownerId: user.id, limit: 50 })
+      .then((res) => setListings(res.items))
+      .finally(() => setLoading(false))
+  }, [user.id])
   const onDelete = async (listingID) => {
     if (window.confirm("Are you sure you want to delete?")) {
-      await deleteDoc(doc(db, 'listings', listingID))
-      const updatedListings = listings.filter(
-        (listing) => listing.id !== listingID
-      );
-      setListings(updatedListings);
-      toast.success('Succesfully deleted the listing')
+      try {
+        await deleteListing(listingID)
+        const updatedListings = listings.filter(
+          (listing) => listing.id !== listingID
+        );
+        setListings(updatedListings);
+        toast.success('Succesfully deleted the listing')
+      } catch (error) {
+        toast.error(error instanceof ApiError ? error.message : 'Could not delete the listing')
+      }
     }
   }
   const onEdit = (listingID) => {

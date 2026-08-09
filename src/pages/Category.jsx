@@ -1,15 +1,6 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import {
-  collection,
-  getDocs,
-  limit,
-  orderBy,
-  query,
-  startAfter,
-  where,
-} from "firebase/firestore";
-import { db } from "../firebase";
+import { getListings } from "../api/listings";
 import Spinner from "../components/Spinner";
 import ListingItem from "../components/ListingItem";
 import { useParams } from "react-router-dom";
@@ -17,62 +8,30 @@ import { useParams } from "react-router-dom";
 export default function Category() {
   const [listings, setListings] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [lastFetchedListing, setLastFetchListing] = useState(null);
+  const [nextCursor, setNextCursor] = useState(null);
   const params = useParams();
   const isRent = params.categoryName === "rent";
 
   useEffect(() => {
-    async function fetchListings() {
-      try {
-        const listingRef = collection(db, "listings");
-        const q = query(
-          listingRef,
-          where("type", "==", params.categoryName),
-          orderBy("timestamp", "desc"),
-          limit(8)
-        );
-        const querySnap = await getDocs(q);
-        const lastVisible = querySnap.docs[querySnap.docs.length - 1];
-        setLastFetchListing(lastVisible);
-        const listings = [];
-        querySnap.forEach((doc) => {
-          return listings.push({
-            id: doc.id,
-            data: doc.data(),
-          });
-        });
-        setListings(listings);
+    setLoading(true);
+    getListings({ type: params.categoryName, limit: 8 })
+      .then((res) => {
+        setListings(res.items);
+        setNextCursor(res.nextCursor);
         setLoading(false);
-      } catch (error) {
-        toast.error("Could not fetch listing");
-      }
-    }
-
-    fetchListings();
+      })
+      .catch(() => toast.error("Could not fetch listing"));
   }, [params.categoryName]);
 
   async function onFetchMoreListings() {
     try {
-      const listingRef = collection(db, "listings");
-      const q = query(
-        listingRef,
-        where("type", "==", params.categoryName),
-        orderBy("timestamp", "desc"),
-        startAfter(lastFetchedListing),
-        limit(4)
-      );
-      const querySnap = await getDocs(q);
-      const lastVisible = querySnap.docs[querySnap.docs.length - 1];
-      setLastFetchListing(lastVisible);
-      const listings = [];
-      querySnap.forEach((doc) => {
-        return listings.push({
-          id: doc.id,
-          data: doc.data(),
-        });
+      const res = await getListings({
+        type: params.categoryName,
+        cursor: nextCursor,
+        limit: 4,
       });
-      setListings((prevState) => [...prevState, ...listings]);
-      setLoading(false);
+      setListings((prevState) => [...prevState, ...res.items]);
+      setNextCursor(res.nextCursor);
     } catch (error) {
       toast.error("Could not fetch listing");
     }
@@ -96,7 +55,7 @@ export default function Category() {
               ))}
             </ul>
           </main>
-          {lastFetchedListing && (
+          {nextCursor && (
             <div className="flex justify-center items-center py-8">
               <button
                 onClick={onFetchMoreListings}

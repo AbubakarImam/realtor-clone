@@ -2,7 +2,9 @@ import { useState } from "react"
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 import { Link, useNavigate } from "react-router-dom";
 import OAuth from "../components/OAuth";
-import { signInWithEmailAndPassword, getAuth } from "firebase/auth";
+import { login } from "../api/auth";
+import { ApiError } from "../api/client";
+import { useAuth } from "../context/AuthContext";
 import { toast } from "react-toastify";
 import DeedIllustration from "../components/DeedIllustration";
 
@@ -10,6 +12,7 @@ import DeedIllustration from "../components/DeedIllustration";
 export default function SignIn() {
 
   const navigate = useNavigate();
+  const { login: setSession } = useAuth();
 
   const [showPassword, setShowPassword] = useState(false)
   const [formData, setFormData] = useState({
@@ -27,13 +30,11 @@ export default function SignIn() {
   const onSubmit = async (e) => {
     e.preventDefault()
     try {
-      const auth = getAuth();
-      const userCredentials = await signInWithEmailAndPassword(auth, email, password);
-      if (userCredentials.user) {
-        navigate('/')
-      }
+      const user = await login({ email, password });
+      setSession(user);
+      navigate('/')
     } catch (error) {
-      toast.error('Error Occur')
+      toast.error(error instanceof ApiError ? error.message : 'Could not sign in')
     }
   }
 

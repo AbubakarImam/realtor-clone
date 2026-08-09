@@ -1,74 +1,29 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import {
-  collection,
-  getDocs,
-  limit,
-  orderBy,
-  query,
-  startAfter,
-  where,
-} from "firebase/firestore";
-import { db } from "../firebase";
+import { getListings } from "../api/listings";
 import Spinner from "../components/Spinner";
 import ListingItem from "../components/ListingItem";
 
 export default function Offers() {
   const [listings, setListings] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [lastFetchedListing, setLastFetchListing] = useState(null);
-  useEffect(() => {
-    async function fetchListings() {
-      try {
-        const listingRef = collection(db, "listings");
-        const q = query(
-          listingRef,
-          where("offer", "==", true),
-          orderBy("timestamp", "desc"),
-          limit(8)
-        );
-        const querySnap = await getDocs(q);
-        const lastVisible = querySnap.docs[querySnap.docs.length - 1];
-        setLastFetchListing(lastVisible);
-        const listings = [];
-        querySnap.forEach((doc) => {
-          return listings.push({
-            id: doc.id,
-            data: doc.data(),
-          });
-        });
-        setListings(listings);
-        setLoading(false);
-      } catch (error) {
-        toast.error("Could not fetch listing");
-      }
-    }
+  const [nextCursor, setNextCursor] = useState(null);
 
-    fetchListings();
+  useEffect(() => {
+    getListings({ offer: true, limit: 8 })
+      .then((res) => {
+        setListings(res.items);
+        setNextCursor(res.nextCursor);
+        setLoading(false);
+      })
+      .catch(() => toast.error("Could not fetch listing"));
   }, []);
 
   async function onFetchMoreListings() {
     try {
-      const listingRef = collection(db, "listings");
-      const q = query(
-        listingRef,
-        where("offer", "==", true),
-        orderBy("timestamp", "desc"),
-        startAfter(lastFetchedListing),
-        limit(4)
-      );
-      const querySnap = await getDocs(q);
-      const lastVisible = querySnap.docs[querySnap.docs.length - 1];
-      setLastFetchListing(lastVisible);
-      const listings = [];
-      querySnap.forEach((doc) => {
-        return listings.push({
-          id: doc.id,
-          data: doc.data(),
-        });
-      });
-      setListings((prevState) => [...prevState, ...listings]);
-      setLoading(false);
+      const res = await getListings({ offer: true, cursor: nextCursor, limit: 4 });
+      setListings((prevState) => [...prevState, ...res.items]);
+      setNextCursor(res.nextCursor);
     } catch (error) {
       toast.error("Could not fetch listing");
     }
@@ -90,7 +45,7 @@ export default function Offers() {
               ))}
             </ul>
           </main>
-          {lastFetchedListing && (
+          {nextCursor && (
             <div className="flex justify-center items-center py-8">
               <button
                 onClick={onFetchMoreListings}

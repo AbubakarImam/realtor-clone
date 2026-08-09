@@ -1,4 +1,3 @@
-import { getAuth, sendPasswordResetEmail } from "firebase/auth";
 import { useState } from "react"
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -9,15 +8,12 @@ import DeedIllustration from "../components/DeedIllustration";
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
 
-  const onSubmit = async (e) => {
+  const onSubmit = (e) => {
     e.preventDefault();
-    try {
-      const auth = getAuth();
-      await sendPasswordResetEmail(auth, email);
-      toast.success('Reset email sent')
-    } catch (error) {
-      toast.error('Reset email not sent')
-    }
+    // The API doesn't have a password-reset endpoint yet — it needs an email
+    // provider (SendGrid/Postmark/SES) wired in first, see docs/ARCHITECTURE.md.
+    // Kept honest rather than pretending this sends anything.
+    toast.error("Password reset isn't available yet in this preview.")
   }
 
   return (

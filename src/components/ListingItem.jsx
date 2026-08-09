@@ -30,7 +30,7 @@ const ListingItem = ({ listing, id, onEdit, onDelete }) => {
             className="absolute top-3 right-3 record-number text-[10px] font-semibold uppercase tracking-stamped bg-ink/80 text-paper px-2 py-1 rounded-sm"
             fromNow
           >
-            {listing.timestamp?.toDate()}
+            {listing.timestamp}
           </Moment>
         </div>
 

@@ -1,11 +1,9 @@
 import React, { useState } from 'react'
 import { toast } from 'react-toastify';
 import Spinner from '../components/Spinner';
-import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-import { getAuth } from 'firebase/auth';
-import { v4 as uuidv4 } from 'uuid'
-import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
-import { db } from '../firebase'
+import { createListing } from '../api/listings';
+import { uploadListingImages } from '../api/uploads';
+import { ApiError } from '../api/client';
 import { useNavigate } from 'react-router';
 import SegmentToggle from '../components/ui/SegmentToggle';
 
@@ -16,14 +14,13 @@ const YES_NO = [
 
 const CreateListing = () => {
     const navigate = useNavigate();
-    const auth = getAuth();
     const [geolocationEnabled] = useState(true);
     const [loading, setLoading] = useState(false)
     const [formData, setFormData] = useState({
         type: "rent",
         name: "",
-        bedroom: 1,
-        bathroom: 1,
+        bedrooms: 1,
+        bathrooms: 1,
         parking: false,
         furnished: false,
         address: '',
@@ -35,7 +32,7 @@ const CreateListing = () => {
         longitude: 0,
         images: {}
     });
-    const { type, name, bedroom, bathroom, parking, furnished, latitude, longitude,
+    const { type, name, bedrooms, bathrooms, parking, furnished, latitude, longitude,
         address, description, offer, regularPrice, discountedPrice, images } = formData;
     const onChange = (e) => {
         let boolean = null;
@@ -72,57 +69,16 @@ const CreateListing = () => {
             toast.error("maximum of 6 images allowed");
             return
         }
-        const storeImage = async (images) => {
-            return new Promise((resolve, reject) => {
-                const storage = getStorage();
-                const filename = `${auth.currentUser.uid}-${images.name}-${uuidv4()}`;
-                const storageRef = ref(storage, filename);
-                const uploadTask = uploadBytesResumable(storageRef, images);
-                uploadTask.on('state_changed',
-                    (snapshot) => {
-                        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                        console.log('Upload is ' + progress + '% done');
-                        switch (snapshot.state) {
-                            case 'paused':
-                                console.log('Upload is paused');
-                                break;
-                            case 'running':
-                                console.log('Upload is running');
-                                break;
-                            default:
-                                break;
-                        }
-                    },
-                    (error) => {
-                        reject(error)
-                    },
-                    () => {
-                        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-                            resolve(downloadURL);
-                        });
-                    }
-                );
-            })
-        }
-        const imgUrls = await Promise.all(
-            [...images].map((image) => storeImage(image))
-        ).catch((error) => {
+        try {
+            const listingId = await createListing(formData);
+            await uploadListingImages(listingId, images);
+            toast.success('Listing created')
+            navigate(`/category/${type}/${listingId}`)
+        } catch (error) {
+            toast.error(error instanceof ApiError ? error.message : 'Could not create listing')
+        } finally {
             setLoading(false);
-            toast.error('Images not uploaded');
-            return
-        });
-        const formDataCopy = {
-            ...formData,
-            imgUrls,
-            timestamp: serverTimestamp(),
-            userRef: auth.currentUser.uid,
-        };
-        delete formDataCopy.images;
-        !formDataCopy.offer && delete formDataCopy.discountedPrice;
-        const docRef = await addDoc(collection(db, 'listings'), formDataCopy);
-        setLoading(false);
-        toast.success('Listing created')
-        navigate(`/category/${formDataCopy.type}/${docRef.id}`)
+        }
     }
 
     if (loading) {
@@ -156,12 +112,12 @@ const CreateListing = () => {
                 <div className="grid grid-cols-2 gap-6">
                     <div>
                         <p className="field-label mb-2">Beds</p>
-                        <input type="number" id='bedroom' value={bedroom} onChange={onChange}
+                        <input type="number" id='bedrooms' value={bedrooms} onChange={onChange}
                             min='1' max="50" required className='ledger-input text-center' />
                     </div>
                     <div>
                         <p className="field-label mb-2">Baths</p>
-                        <input type="number" id='bathroom' value={bathroom} onChange={onChange}
+                        <input type="number" id='bathrooms' value={bathrooms} onChange={onChange}
                             min='1' max="50" required className='ledger-input text-center' />
                     </div>
                 </div>

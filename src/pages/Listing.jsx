@@ -1,9 +1,8 @@
-import { doc, getDoc } from "firebase/firestore";
 import { useState } from "react";
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import Spinner from "../components/Spinner";
-import { db } from "../firebase";
+import { getListing } from "../api/listings";
 import { Swiper, SwiperSlide } from "swiper/react";
 import SwiperCore, {
   EffectFade,
@@ -20,11 +19,13 @@ import {
   FaParking,
   FaChair,
 } from "react-icons/fa";
-import { getAuth } from "firebase/auth";
 import Contact from "../components/Contact";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import StatusStamp from "../components/ui/StatusStamp";
 import RecordPhoto from "../components/RecordPhoto";
+import { useAuth } from "../context/AuthContext";
+
+const FALLBACK_CENTER = [9.061642954351017, 7.421741821547859];
 
 const SPECS = [
   { key: "bedrooms", Icon: FaBed, label: (v) => (v > 1 ? `${v} Beds` : "1 Bed") },
@@ -32,30 +33,36 @@ const SPECS = [
 ];
 
 export default function Listing() {
-  const auth = getAuth();
+  const { user } = useAuth();
   const params = useParams();
   const [listing, setListing] = useState(null);
   const [loading, setLoading] = useState(true);
   const [shareLinkCopied, setShareLinkCopied] = useState(false);
   const [contactLandlord, setContactLandlord] = useState(false);
   SwiperCore.use([Autoplay, Navigation, Pagination]);
+  const [notFound, setNotFound] = useState(false);
   useEffect(() => {
-    async function fetchListing() {
-      const docRef = doc(db, "listings", params.listingId);
-      const docSnap = await getDoc(docRef);
-      if (docSnap.exists()) {
-        setListing(docSnap.data());
-        setLoading(false);
-      }
-    }
-    fetchListing();
+    getListing(params.listingId)
+      .then((data) => setListing(data))
+      .catch(() => setNotFound(true))
+      .finally(() => setLoading(false));
   }, [params.listingId]);
   if (loading) {
     return <Spinner />;
   }
+  if (notFound || !listing) {
+    return (
+      <div className="max-w-6xl mx-auto px-3 sm:px-6 py-20 text-center">
+        <p className="field-label text-ink-faint mb-2">Record Not Found</p>
+        <p className="text-ink-soft">This listing doesn't exist or was removed.</p>
+      </div>
+    );
+  }
 
   const price = listing.offer ? listing.discountedPrice : listing.regularPrice;
   const formattedPrice = price?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  const mapCenter =
+    listing.latitude && listing.longitude ? [listing.latitude, listing.longitude] : FALLBACK_CENTER;
 
   return (
     <main className="pb-16">
@@ -163,7 +170,7 @@ export default function Listing() {
             </div>
           </div>
 
-          {listing.userRef !== auth.currentUser?.uid && !contactLandlord && (
+          {listing.userRef !== user?.id && !contactLandlord && (
             <button
               onClick={() => setContactLandlord(true)}
               className="w-full px-7 py-3 bg-stamp text-paper font-mono font-semibold text-xs uppercase tracking-stamped rounded-sm shadow-stamp hover:bg-stamp-dark transition-colors duration-150 ease-in-out"
@@ -171,7 +178,9 @@ export default function Listing() {
               Request this record
             </button>
           )}
-          {contactLandlord && <Contact userRef={listing.userRef} listing={listing} />}
+          {contactLandlord && (
+            <Contact listingId={params.listingId} userRef={listing.userRef} listing={listing} />
+          )}
         </div>
 
         <div className="w-full lg:w-2/5 flex flex-col">
@@ -181,7 +190,7 @@ export default function Listing() {
             </p>
             <div className="w-full h-[260px] lg:h-full">
               <MapContainer
-                center={[9.061642954351017, 7.421741821547859]}
+                center={mapCenter}
                 zoom={13}
                 scrollWheelZoom={false}
                 style={{ height: "100%", width: "100%" }}
@@ -190,7 +199,7 @@ export default function Listing() {
                   attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                   url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
-                <Marker position={[9.061642954351017, 7.421741821547859]}>
+                <Marker position={mapCenter}>
                   <Popup>{listing.address}</Popup>
                 </Marker>
               </MapContainer>

@@ -2,9 +2,8 @@ import { useState } from "react";
 
 /**
  * Drop-in replacement for a plain <img> that falls back to an in-world
- * "no photo filed" placeholder when the source fails to load — e.g. the
- * current Firebase Storage bucket returning 402 for every listing image
- * (Spark plan no longer serves Storage objects), or an empty imgUrls entry.
+ * "no photo filed" placeholder when the source fails to load — a broken
+ * object-store URL, a listing with no images yet, or any other load failure.
  */
 export default function RecordPhoto({ src, alt, className = "" }) {
   const [failed, setFailed] = useState(false);
